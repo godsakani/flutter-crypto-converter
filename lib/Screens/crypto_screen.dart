@@ -12,7 +12,7 @@ class CryptoScreen extends StatefulWidget {
 }
 
 class _CryptoScreenState extends State<CryptoScreen> {
-  String selectedCurrency = 'USD';
+  String selectedCurrency = 'AUD';
 
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -32,6 +32,7 @@ class _CryptoScreenState extends State<CryptoScreen> {
       onChanged: (value) {
         setState(() {
           selectedCurrency = value.toString();
+          getCoin();
         });
       },
     );
@@ -52,9 +53,38 @@ class _CryptoScreenState extends State<CryptoScreen> {
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
         print(selectedIndex);
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+          getCoin();
+        });
       },
       children: pickerItem,
     );
+  }
+
+  Map<String, String> coinValues = {};
+
+  bool isWaiting = false;
+
+  String bitValue = '?';
+
+  void getCoin() async {
+    isWaiting = true;
+    try {
+      var data = await CoinModel().getCoinData(selectedCurrency);
+      isWaiting = false;
+      setState(() {
+        coinValues = data.toStringAsFixed(0);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCoin();
   }
 
   @override
@@ -69,11 +99,11 @@ class _CryptoScreenState extends State<CryptoScreen> {
         child: Column(
           children: <Widget>[
             Row(
-              children: const <Widget>[
+              children: <Widget>[
                 Expanded(
                   child: Cryptocard(
                     title: Text(
-                      '1 BTC = 5055 CNY',
+                      '1 BTC = $bitValue $selectedCurrency',
                       style: kBodyTextStyle,
                     ),
                   ),
@@ -81,11 +111,11 @@ class _CryptoScreenState extends State<CryptoScreen> {
               ],
             ),
             Row(
-              children: const <Widget>[
+              children: <Widget>[
                 Expanded(
                   child: Cryptocard(
                     title: Text(
-                      '1 ETH = 5505 CNY',
+                      '1 ETH = $bitValue $selectedCurrency',
                       style: kBodyTextStyle,
                     ),
                   ),
@@ -93,11 +123,11 @@ class _CryptoScreenState extends State<CryptoScreen> {
               ],
             ),
             Row(
-              children: const <Widget>[
+              children: <Widget>[
                 Expanded(
                   child: Cryptocard(
                     title: Text(
-                      '1 LTC = 5505 CNY',
+                      '1 LTC = $bitValue $selectedCurrency',
                       style: kBodyTextStyle,
                     ),
                   ),
