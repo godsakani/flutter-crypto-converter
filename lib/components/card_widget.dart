@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Cryptocard extends StatelessWidget {
-  const Cryptocard({Key? key, required this.title}) : super(key: key);
+  const Cryptocard({Key? key, required this.title,
+    r}) : super(key: key);
 
   final Widget title;
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
